@@ -1,0 +1,49 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'main/style/style.css' %}">
+    <title>django</title>
+</head>
+<body>
+    <header>
+        <h1>
+            <a href="{% url 'posts' %}">
+                django blog
+            </a>
+        </h1>
+        <div style="display: flex;">
+            {% if user.is_authenticated %}
+                <p>Hello, {{user.get_username}}</p>
+                <form method="post" action="{% url 'logout' %}?next={{request.path}}">
+                    {% csrf_token %}
+                    <button type="submit">Log out</button>
+                </form>
+                {% if perms.main.add_post %}
+                    <form method="post" action="{% url 'add_post' %}">
+                        {% csrf_token %}
+                        <button type="submit">Add post</button>
+                    </form>
+                {% endif %}
+            {% else %}
+                <form method="post" action="{% url 'login' %}?next={{request.path}}">
+                    {% csrf_token %}
+                    <button type="submit">Log in</button>
+                </form>
+            {% endif %}
+        </div>
+    </header>
+    <div class="content">
+        <div class="column">
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 django</p>
+    </footer>
+</body>
+</html>
